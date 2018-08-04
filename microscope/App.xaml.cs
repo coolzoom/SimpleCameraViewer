@@ -13,14 +13,13 @@ namespace Microscope
     /// </summary>
     public partial class App : Application
     {
-        private MicroscopeViewModel _vm;
-        private MicroscopeView _v;
+
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            _vm = new MicroscopeViewModel();
-            _v = new MicroscopeView() { DataContext = _vm };
-            _v.Show();
+            var vm = new MicroscopeViewModel();
+            var v = new MicroscopeView() { DataContext = vm };
+            v.Show();
 
         }
 

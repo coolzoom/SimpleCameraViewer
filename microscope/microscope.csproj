@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <LanguageTargets>$(MSBuildExtensionsPath)\$(VisualStudioVersion)\Bin\Microsoft.CSharp.targets</LanguageTargets>
+    <TargetFramework>net461</TargetFramework>
+    <OutputType>WinExe</OutputType>
+    <StartupObject>Microscope.App</StartupObject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx" Generator="ResXFileCodeGenerator" LastGenOutput="Resources.Designer.cs" />
+    <Compile Update="Properties\Resources.Designer.cs" DesignTime="True" AutoGen="True" DependentUpon="Resources.resx" />
+
+    <None Update="Properties\Settings.settings" Generator="SettingsSingleFileGenerator" LastGenOutput="Settings.Designer.cs" />
+    <Compile Update="Properties\Settings.Designer.cs" DesignTime="True" AutoGen="True" DependentUpon="Settings.settings" />
+
+    <Page Include="MicroscopeView.xaml" SubType="Designer" Generator="MSBuild:Compile" />
+    <Compile Update="MicroscopeView.xaml.cs" DependentUpon="MicroscopeView.xaml" />
+    <Resource Include="Images\*.png" />
+
+    <ApplicationDefinition Include="App.xaml" SubType="Designer" Generator="XamlIntelliSenseFileGenerator" />
+
+    <PackageReference Include="AForge.Video.DirectShow" Version="2.2.5" />
+
+    <ProjectReference Include="..\MVVMBase\MVVMBase.csproj" />
+    <Compile Update="App.xaml.cs" DependentUpon="App.xaml" />
+  </ItemGroup>
+
+  <Import Project="$(MSBuildSDKExtrasTargets)" Condition="Exists('$(MSBuildSDKExtrasTargets)')" />
+</Project>

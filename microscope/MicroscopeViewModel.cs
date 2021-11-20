@@ -95,20 +95,20 @@ namespace Microscope
             PlayEnabled = false;
 
 
-            //pin
-            Bitmap bitmapPin = new Bitmap(500, 200);
-            Graphics gPin = Graphics.FromImage(bitmapPin);
-            Font fontPin = new System.Drawing.Font("宋体", 20, System.Drawing.FontStyle.Regular);
-            System.Drawing.Brush brushPin = new SolidBrush(System.Drawing.Color.White);
-            int MarginPin = 0;
-            gPin.DrawString("内容", fontPin, brushPin, 0 + MarginPin, 50 + MarginPin);
-            gPin.DrawString("内容", fontPin, brushPin, 0 + MarginPin, 77 + MarginPin);
+            ////pin
+            //Bitmap bitmapPin = new Bitmap(500, 200);
+            //Graphics gPin = Graphics.FromImage(bitmapPin);
+            //Font fontPin = new System.Drawing.Font("宋体", 20, System.Drawing.FontStyle.Regular);
+            //System.Drawing.Brush brushPin = new SolidBrush(System.Drawing.Color.White);
+            //int MarginPin = 0;
+            //gPin.DrawString("内容", fontPin, brushPin, 0 + MarginPin, 50 + MarginPin);
+            //gPin.DrawString("内容", fontPin, brushPin, 0 + MarginPin, 77 + MarginPin);
 
-            IntPtr hBitmap = bitmapPin.GetHbitmap();
-            System.Windows.Media.ImageSource WpfBitmap = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, System.Windows.Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+            //IntPtr hBitmap = bitmapPin.GetHbitmap();
+            //System.Windows.Media.ImageSource WpfBitmap = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, System.Windows.Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
 
-            CurrentPinFrame = WpfBitmap;
+            //CurrentPinFrame = WpfBitmap;
         }
 
         private RelayCommand _stopCommand;
@@ -194,14 +194,26 @@ namespace Microscope
 
                 //draw
                 Graphics g = Graphics.FromImage(bitmap);
-                Font font = new Font("宋体", 20, FontStyle.Regular);
+                Font font = new Font("Calibri", 8, FontStyle.Regular);
                 System.Drawing.Brush brush = new SolidBrush(System.Drawing.Color.White);
                 int Margin = 0;
-                g.DrawString("内容", font, brush, 0 + Margin, 50 + Margin);
-                g.DrawString("内容", font, brush, 0 + Margin, 77 + Margin);
+                g.DrawString("string test", font, brush, 0 + Margin, 50 + Margin);
+                g.DrawString("string test", font, brush, 0 + Margin, 77 + Margin);
 
+                int x = 0;
+                for (int i = 0; i < 100; i++)
+                {
 
-                bitmap.RotateFlip(RotateFlipType.RotateNoneFlipX);
+                    for (int j = 0; j < 100; j++)
+                    {
+                       
+                        g.DrawString("□", font, brush, i*10, j * 10);
+                        x += 1;
+                    }
+
+                }
+
+                //bitmap.RotateFlip(RotateFlipType.RotateNoneFlipX);
                 bitmap.Save(stream, ImageFormat.Bmp);
                 image.StreamSource = stream;
                 image.CacheOption = BitmapCacheOption.OnLoad;

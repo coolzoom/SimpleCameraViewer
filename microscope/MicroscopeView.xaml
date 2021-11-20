@@ -14,5 +14,6 @@
             <ComboBox ItemsSource="{Binding DeviceList}" DisplayMemberPath="Name" SelectedItem="{Binding CameraInfo, Mode=TwoWay}" IsEnabled="{Binding PlayEnabled}"></ComboBox>
         </StackPanel>
         <Image Source="{Binding CurrentFrame}"/>
+        <Image x:Name="imageTest" Height="273" Margin="246,0,-0.4,0" Source="{Binding CurrentPinFrame}"/>
     </StackPanel>
 </Window>

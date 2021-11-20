@@ -5,6 +5,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using AForge.Video;
 using AForge.Video.DirectShow;
@@ -31,6 +32,13 @@ namespace Microscope
         {
             get => _currentFrame;
             set => SetField(ref _currentFrame, value);
+        }
+
+        private ImageSource _currentPinFrame;
+        public ImageSource CurrentPinFrame
+        {
+            get => _currentPinFrame;
+            set => SetField(ref _currentPinFrame, value);
         }
 
         private ObservableCollection<FilterInfo> _deviceList;
@@ -87,6 +95,20 @@ namespace Microscope
             PlayEnabled = false;
 
 
+            //pin
+            Bitmap bitmapPin = new Bitmap(500, 200);
+            Graphics gPin = Graphics.FromImage(bitmapPin);
+            Font fontPin = new System.Drawing.Font("宋体", 20, System.Drawing.FontStyle.Regular);
+            System.Drawing.Brush brushPin = new SolidBrush(System.Drawing.Color.White);
+            int MarginPin = 0;
+            gPin.DrawString("内容", fontPin, brushPin, 0 + MarginPin, 50 + MarginPin);
+            gPin.DrawString("内容", fontPin, brushPin, 0 + MarginPin, 77 + MarginPin);
+
+            IntPtr hBitmap = bitmapPin.GetHbitmap();
+            System.Windows.Media.ImageSource WpfBitmap = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, System.Windows.Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+
+
+            CurrentPinFrame = WpfBitmap;
         }
 
         private RelayCommand _stopCommand;
@@ -100,6 +122,7 @@ namespace Microscope
             _camera.SignalToStop();
             PlayEnabled = true;
             CurrentFrame = null;
+            CurrentPinFrame = null;
             _camera.NewFrame -= GetCameraFrame;
             _camera = null;
 
@@ -120,7 +143,7 @@ namespace Microscope
                 //draw
                 Graphics g = Graphics.FromImage(bitmap);
                 Font font = new Font("宋体", 20, FontStyle.Regular);
-                Brush brush = new SolidBrush(Color.White);
+                System.Drawing.Brush brush = new SolidBrush(System.Drawing.Color.White);
                 int Margin = 0;
                 g.DrawString("内容", font, brush, 0 + Margin, 50 + Margin);
                 g.DrawString("内容", font, brush, 0 + Margin, 77 + Margin);
@@ -137,6 +160,8 @@ namespace Microscope
                 image.Freeze();
 
                 CurrentFrame = image;
+
+
             }
 
         }

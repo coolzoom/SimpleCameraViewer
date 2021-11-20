@@ -116,10 +116,23 @@ namespace Microscope
                 var image = new BitmapImage();
 
                 image.BeginInit();
+
+                //draw
+                Graphics g = Graphics.FromImage(bitmap);
+                Font font = new Font("宋体", 20, FontStyle.Regular);
+                Brush brush = new SolidBrush(Color.White);
+                int Margin = 0;
+                g.DrawString("内容", font, brush, 0 + Margin, 50 + Margin);
+                g.DrawString("内容", font, brush, 0 + Margin, 77 + Margin);
+
+
                 bitmap.RotateFlip(RotateFlipType.RotateNoneFlipX);
                 bitmap.Save(stream, ImageFormat.Bmp);
                 image.StreamSource = stream;
                 image.CacheOption = BitmapCacheOption.OnLoad;
+
+           
+
                 image.EndInit();
                 image.Freeze();
 

@@ -11,6 +11,7 @@
         <StackPanel Orientation="Horizontal">
             <Button Content="Start" Command="{Binding StartCommand}" IsEnabled="{Binding PlayEnabled}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="76"></Button>
             <Button Content="Stop" Command="{Binding StopCommand}"  HorizontalAlignment="Left" VerticalAlignment="Top" Width="76"></Button>
+            <Button Content="Capture" Command="{Binding CaptureCommand}"  HorizontalAlignment="Left" VerticalAlignment="Top" Width="76"></Button>
             <ComboBox ItemsSource="{Binding DeviceList}" DisplayMemberPath="Name" SelectedItem="{Binding CameraInfo, Mode=TwoWay}" IsEnabled="{Binding PlayEnabled}"></ComboBox>
         </StackPanel>
         <Image Source="{Binding CurrentFrame}"/>

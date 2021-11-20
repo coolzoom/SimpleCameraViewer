@@ -128,6 +128,58 @@ namespace Microscope
 
         }
 
+        private RelayCommand _captureCommand;
+        public ICommand CaptureCommand
+        {
+            get { return _captureCommand ?? (_stopCommand = new RelayCommand(param => this.Capture())); }
+        }
+
+        public void Capture()
+        {
+            var dlg = new Microsoft.Win32.SaveFileDialog();
+            dlg.Filter = "PNG图片(*.png)|*.png|JPEG图片(*.jpg)|*.jpg|所有文件(*.*)|*.*";
+            var rst = dlg.ShowDialog();
+            if (rst == true)
+            {
+                var fileName = dlg.FileName;
+
+                SaveImageToFile(CurrentFrame, fileName);
+                System.Windows.MessageBox.Show("保存成功");
+            }
+
+        }
+        /// <summary>
+        /// 保存图片到文件
+        /// </summary>
+        /// <param name="image">图片数据</param>
+        /// <param name="filePath">保存路径</param>
+        private void SaveImageToFile(BitmapSource image, string filePath)
+        {
+            BitmapEncoder encoder = GetBitmapEncoder(filePath);
+            encoder.Frames.Add(BitmapFrame.Create(image));
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                encoder.Save(stream);
+            }
+        }
+        /// <summary>
+        /// 根据文件扩展名获取图片编码器
+        /// </summary>
+        /// <param name="filePath">文件路径</param>
+        /// <returns>图片编码器</returns>
+        private BitmapEncoder GetBitmapEncoder(string filePath)
+        {
+            var extName = Path.GetExtension(filePath).ToLower();
+            if (extName.Equals(".png"))
+            {
+                return new PngBitmapEncoder();
+            }
+            else
+            {
+                return new JpegBitmapEncoder();
+            }
+        }
 
 
         private void GetCameraFrame(object sender, NewFrameEventArgs eventArgs)

@@ -61,12 +61,19 @@ namespace Microscope
             get => _profileName;
             set => SetField(ref _profileName, value);
         }
-
+        //original profile read from the csv
         private Dictionary<string, pinlocation> _originalProfile;
         public Dictionary<string, pinlocation> OriginalProfile
         {
             get => _originalProfile;
             set => SetField(ref _originalProfile, value);
+        }
+        //translated to the GUI image xy location
+        private Dictionary<string, pinlocation> _imageProfile;
+        public Dictionary<string, pinlocation> ImageProfile
+        {
+            get => _imageProfile;
+            set => SetField(ref _imageProfile, value);
         }
 
         private ObservableCollection<string> _profileList;
@@ -170,9 +177,14 @@ namespace Microscope
             get { return _reloadprofileCommand ?? (_reloadprofileCommand = new RelayCommand(param => this.ReloadProfile())); }
         }
 
+
+        //minx y for image shrink
+        private double minx = 9999999999999;
+        private double miny = 9999999999999;
         public void ReloadProfile()
         {
             OriginalProfile = new Dictionary<string, pinlocation>();
+            
             using (StreamReader sr = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Profile",ProfileName)))
             {
                 string line;
@@ -192,13 +204,42 @@ namespace Microscope
                         p.x = x;
                         p.y = y;
                         OriginalProfile.Add(p.pinnum, p);
+
+                        //assign minx and miny
+                        if (ipointer == 2)//the first value is minx y and then compare
+                        {
+                            minx = x;
+                            miny = 0 - y;
+                        }
+                        else 
+                        {
+                            minx = (x < minx) ? x : minx;
+                            miny = (y < miny) ? y : miny;
+                        }
+
                     }
                     ipointer += 1;
                 }
             }
 
             //transform to the image cordinate
-            //wip
+            TranslateProfile();
+        }
+
+        private void TranslateProfile()
+        {
+            int shrinkratio = 10;
+            ImageProfile = new Dictionary<string, pinlocation>();
+
+            //move the imageprofile to 0,0
+            foreach (KeyValuePair<string, pinlocation> kv in OriginalProfile)
+            {
+                pinlocation p;
+                p.pinnum = kv.Key;
+                p.x = (kv.Value.x - minx) / shrinkratio;
+                p.y = (kv.Value.y - miny) / shrinkratio;
+                ImageProfile.Add(p.pinnum, p);
+            }
         }
 
         private RelayCommand _captureCommand;
@@ -273,18 +314,31 @@ namespace Microscope
                 g.DrawString("string test", font, brush, 0 + Margin, 50 + Margin);
                 g.DrawString("string test", font, brush, 0 + Margin, 77 + Margin);
 
-                int x = 0;
-                for (int i = 0; i < 100; i++)
+                //int x = 0;
+                //for (int i = 0; i < 100; i++)
+                //{
+
+                //    for (int j = 0; j < 100; j++)
+                //    {
+
+                //        g.DrawString("□", font, brush, i*10, j * 10);
+                //        x += 1;
+                //    }
+
+                //}
+
+                //load imageprofile
+                Font fontpin = new Font("Calibri", 8, FontStyle.Regular);
+                Font fontpinnum = new Font("Calibri", 5, FontStyle.Regular);
+                if (ImageProfile != null)
                 {
-
-                    for (int j = 0; j < 100; j++)
+                    foreach (KeyValuePair<string, pinlocation> kv in ImageProfile)
                     {
-                       
-                        g.DrawString("□", font, brush, i*10, j * 10);
-                        x += 1;
+                        g.DrawString("□", fontpin, brush, (float)kv.Value.x, (float)kv.Value.y);
+                        //g.DrawString(kv.Key, fontpinnum, brush, (float)kv.Value.x, (float)kv.Value.y+4);
                     }
-
                 }
+              
 
                 //bitmap.RotateFlip(RotateFlipType.RotateNoneFlipX);
                 bitmap.Save(stream, ImageFormat.Bmp);

@@ -13,6 +13,8 @@
             <Button Content="Stop" Command="{Binding StopCommand}"  HorizontalAlignment="Left" VerticalAlignment="Top" Width="76"></Button>
             <Button Content="Capture" Command="{Binding CaptureCommand}"  HorizontalAlignment="Left" VerticalAlignment="Top" Width="76"></Button>
             <ComboBox ItemsSource="{Binding DeviceList}" DisplayMemberPath="Name" SelectedItem="{Binding CameraInfo, Mode=TwoWay}" IsEnabled="{Binding PlayEnabled}"></ComboBox>
+            <ComboBox ItemsSource="{Binding ProfileList}" SelectedItem="{Binding ProfileName, Mode=TwoWay}" ></ComboBox>
+            <Button Content="Reload Profile" Command="{Binding ReloadProfileCommand}"  HorizontalAlignment="Left" VerticalAlignment="Top" Width="76"></Button>
         </StackPanel>
         <Image Source="{Binding CurrentFrame}"/>
         <Image x:Name="imageTest" Height="273" Margin="246,0,-0.4,0" Source="{Binding CurrentPinFrame}"/>

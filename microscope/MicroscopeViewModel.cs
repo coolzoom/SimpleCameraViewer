@@ -48,6 +48,20 @@ namespace Microscope
             set => SetField(ref _deviceList, value);
         }
 
+        private string _profileName;
+        public string ProfileName
+        {
+            get => _profileName;
+            set => SetField(ref _profileName, value);
+        }
+
+        private ObservableCollection<string> _profileList;
+        public ObservableCollection<string> ProfileList
+        {
+            get => _profileList;
+            set => SetField(ref _profileList, value);
+        }
+
         private bool _playEnabled;
         public bool PlayEnabled
         {
@@ -75,6 +89,14 @@ namespace Microscope
                 if (!string.IsNullOrEmpty(vcd.Name))
                     DeviceList.Add(vcd);
             }
+
+            //load profile
+            _profileList = new ObservableCollection<string>();
+            ProfileList = new ObservableCollection<string>();
+            DirectoryInfo theFolder = new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Profile"));
+            FileInfo[] fileInfo = theFolder.GetFiles();
+            foreach (FileInfo NextFile in fileInfo)  //遍历文件
+                ProfileList.Add(NextFile.Name);
 
             PlayEnabled = true;
 
@@ -128,10 +150,32 @@ namespace Microscope
 
         }
 
+        private RelayCommand _reloadprofileCommand;
+        public ICommand ReloadProfileCommand
+        {
+            get { return _reloadprofileCommand ?? (_reloadprofileCommand = new RelayCommand(param => this.ReloadProfile())); }
+        }
+
+        public void ReloadProfile()
+        {
+            // 创建一个 StreamReader 的实例来读取文件 
+            // using 语句也能关闭 StreamReader
+            using (StreamReader sr = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Profile",ProfileName)))
+            {
+                string line;
+
+                // 从文件读取并显示行，直到文件的末尾 
+                while ((line = sr.ReadLine()) != null)
+                {
+                    Console.WriteLine(line);
+                }
+            }
+        }
+
         private RelayCommand _captureCommand;
         public ICommand CaptureCommand
         {
-            get { return _captureCommand ?? (_stopCommand = new RelayCommand(param => this.Capture())); }
+            get { return _captureCommand ?? (_captureCommand = new RelayCommand(param => this.Capture())); }
         }
 
         public void Capture()

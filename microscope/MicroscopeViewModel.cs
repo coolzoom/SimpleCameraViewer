@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -19,6 +20,12 @@ namespace Microscope
 
         private VideoCaptureDevice _camera;
 
+        public struct pinlocation
+        {
+            public string pinnum;
+            public double x;
+            public double y;
+        }
 
         private FilterInfo _cameraInfo;
         public FilterInfo CameraInfo
@@ -53,6 +60,13 @@ namespace Microscope
         {
             get => _profileName;
             set => SetField(ref _profileName, value);
+        }
+
+        private Dictionary<string, pinlocation> _originalProfile;
+        public Dictionary<string, pinlocation> OriginalProfile
+        {
+            get => _originalProfile;
+            set => SetField(ref _originalProfile, value);
         }
 
         private ObservableCollection<string> _profileList;
@@ -158,18 +172,33 @@ namespace Microscope
 
         public void ReloadProfile()
         {
-            // 创建一个 StreamReader 的实例来读取文件 
-            // using 语句也能关闭 StreamReader
+            OriginalProfile = new Dictionary<string, pinlocation>();
             using (StreamReader sr = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Profile",ProfileName)))
             {
                 string line;
-
-                // 从文件读取并显示行，直到文件的末尾 
+                int ipointer = 0;
                 while ((line = sr.ReadLine()) != null)
                 {
-                    Console.WriteLine(line);
+                    //Console.WriteLine(line);
+                    string[] arr = line.Split(',');
+                    if (arr.Length==14 && ipointer>1)//do not parse first 2 line(header and begin)
+                    {
+                        pinlocation p;
+                        p.pinnum = arr[1];
+                        double x = 0;
+                        double y = 0;
+                        Double.TryParse(arr[3], out x);
+                        Double.TryParse(arr[4], out y);
+                        p.x = x;
+                        p.y = y;
+                        OriginalProfile.Add(p.pinnum, p);
+                    }
+                    ipointer += 1;
                 }
             }
+
+            //transform to the image cordinate
+            //wip
         }
 
         private RelayCommand _captureCommand;
